@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pencari Data Nopol</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--r-mgr:#e3edff;--r-exe:#fff0d1;--r-stf:#e4f3e8;--bg:#f6f5f1;--card:#fff;--text:#1c1b19;--muted:#6b6a66;--line:#e4e2db;--accent:#1d6b4f;--accent-t:#fff;--danger:#b3261e;--plate-bg:#1c1b19;--plate-t:#fff;color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--r-mgr:#1b2a40;--r-exe:#3a2d12;--r-stf:#16301f;--bg:#151513;--card:#201f1c;--text:#f1efe8;--muted:#a3a198;--line:#34332e;--accent:#4cc79a;--accent-t:#0e2a20;--danger:#ff8a80;--plate-bg:#f1efe8;--plate-t:#151513}}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark;--r-mgr:#1b2a40;--r-exe:#3a2d12;--r-stf:#16301f;--bg:#151513;--card:#201f1c;--text:#f1efe8;--muted:#a3a198;--line:#34332e;--accent:#4cc79a;--accent-t:#0e2a20;--danger:#ff8a80;--plate-bg:#f1efe8;--plate-t:#151513}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px 40px}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:14px 0 10px;z-index:5}
+h1{font-size:20px;margin:0}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+#theme{padding:5px 10px;font-size:13px}
+input,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+textarea{min-height:170px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+.meta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:13px;color:var(--muted)}
+.meta button{padding:6px 10px;font-size:13px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:8px 12px}
+button.pri{background:var(--accent);color:var(--accent-t);border-color:var(--accent);font-weight:600}
+button.del{color:var(--danger)}
+#form,#bform{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:6px 0 12px}
+#form.open,#bform.open{display:block}
+#form label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+#form label:first-child{margin-top:0}
+.vr{display:flex;gap:6px;margin-bottom:6px}
+.vr .vn{flex:1.2;min-width:0}
+.vr .vj{flex:1;min-width:0}
+.vr .x{padding:6px 11px}
+.row{display:flex;gap:8px;margin-top:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.nama{font-weight:600;word-break:break-word}
+.jab{color:var(--muted);margin-top:2px;font-size:14px;word-break:break-word}
+.card.r-mgr{background:var(--r-mgr)}
+.card.r-exe{background:var(--r-exe)}
+.card.r-stf{background:var(--r-stf)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.who{flex:1;min-width:0}
+.vs{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex:none;max-width:52%}
+.v{display:flex;flex-direction:column;align-items:flex-end}
+.jn{color:var(--muted);font-size:12px;margin-top:2px}
+.plate{font:700 19px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em;background:var(--plate-bg);color:var(--plate-t);padding:4px 11px;border-radius:7px;white-space:nowrap}
+.act{display:flex;gap:6px;margin-top:12px}
+.act button{padding:5px 10px;font-size:13px}
+.empty{text-align:center;color:var(--muted);padding:36px 10px}
+#msg{font-size:13px;color:var(--accent);min-height:18px;margin:4px 2px}
+#merge{display:none;margin:0 0 8px;font-size:13px}
+#selbar{display:none;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px}
+#selbar.open{display:flex}
+#selbar button{padding:6px 10px;font-size:13px}
+#seldel:disabled{opacity:.45;cursor:default}
+.card.sel{outline:2px solid var(--accent)}
+.ch{display:flex;align-items:flex-start}
+.cb{flex:1;min-width:0}
+.ck{width:22px;height:22px;padding:0;margin:2px 12px 0 0;flex:none;accent-color:var(--accent)}
+.selmode .act{display:none}
+.selmode .card{cursor:pointer}
+footer{font-size:12px;color:var(--muted);text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="hd"><h1>Pencari Data</h1><button id="theme" title="Ganti tema">Otomatis</button></div>
+<input id="q" type="search" placeholder="Cari nama, nopol, jabatan, atau jenis…" autocomplete="off">
+<div class="meta"><span id="count">Memuat…</span><span><button id="selmode">Pilih</button> <button id="bulk">Tambah banyak</button> <button class="pri" id="add">+ Tambah data</button></span></div>
+</header>
+
+<div id="form">
+<label for="nama">Nama</label><input id="nama" autocomplete="off">
+<label for="jabatan">Jabatan</label><input id="jabatan" autocomplete="off">
+<label>Kendaraan (nopol dan jenis)</label>
+<div id="veh"></div>
+<button id="addveh" type="button">+ Tambah kendaraan</button>
+<div class="row"><button class="pri" id="save">Simpan</button><button id="cancel">Batal</button></div>
+<datalist id="jenis"><option value="Motor"><option value="Mobil"><option value="Pickup"><option value="Truk"><option value="Bus"></datalist>
+</div>
+
+<div id="bform">
+<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Tempel banyak data, satu baris satu kendaraan, urutan: nama, nopol, jabatan, jenis kendaraan (jenis boleh kosong). Baris dengan nama dan jabatan yang sama otomatis digabung jadi satu orang dengan beberapa nopol. Pemisah boleh tab (salin dari Excel), koma, titik koma, atau |.</div>
+<textarea id="btext" placeholder="Budi Santoso, B 1234 XYZ, Manajer, Mobil&#10;Budi Santoso, B 5678 ABC, Manajer, Motor"></textarea>
+<div id="bprev" style="font-size:13px;color:var(--muted);margin-top:6px"></div>
+<div class="row"><button class="pri" id="bsave">Tambahkan semua</button><button id="bcancel">Batal</button></div>
+</div>
+
+<div id="msg"></div>
+<div id="selbar"><button id="selall">Pilih semua yang tampil</button><button id="selnone">Kosongkan</button><button class="del" id="seldel">Hapus (0)</button></div>
+<button id="merge"></button>
+<div id="list"></div>
+<footer id="foot"></footer>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let rows=[],api=null,editing=null,pendingDel=null,msgT=null,loaded=false;
+let selMode=false,sel=new Set(),pendingBulkDel=false,curList=[];
+const LS='nopol-db-v1';
+const lsLoad=()=>{try{return JSON.parse(localStorage.getItem(LS))||[]}catch(e){return[]}};
+const lsSave=()=>{try{localStorage.setItem(LS,JSON.stringify(rows))}catch(e){}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').toLowerCase().replace(/\s+/g,'');
+const veh=r=>Array.isArray(r.kendaraan)?r.kendaraan:(r.nopol?[{nopol:r.nopol,jenis:''}]:[]);
+const pkey=r=>norm(r.nama)+'|'+norm(r.jabatan);
+const role=r=>{const j=String(r.jabatan||'').toLowerCase();return /manajer|manager|mgr/.test(j)?' r-mgr':/\bexe|executive|eksekutif/.test(j)?' r-exe':/staff|staf/.test(j)?' r-stf':''};
+function mergeV(a,b){const out=[],seen=new Set();a.concat(b).forEach(v=>{const k=norm(v.nopol);if(!k||seen.has(k))return;seen.add(k);out.push({nopol:String(v.nopol).toUpperCase(),jenis:v.jenis||''})});return out}
+function msg(t){const m=$('#msg');m.textContent=t;clearTimeout(msgT);msgT=setTimeout(()=>m.textContent='',4500)}
+
+async function put(id,d){
+  if(api)await api.doc(id).set(d);
+  else{rows=rows.map(r=>r.id===id?Object.assign({id},d):r);lsSave();render()}
+}
+async function create(d){
+  if(api)await api.add(d);
+  else{rows.push(Object.assign({id:Date.now()+'-'+Math.random().toString(36).slice(2,6)},d));lsSave();render()}
+}
+async function drop(id){
+  if(api)await api.doc(id).delete();
+  else{rows=rows.filter(r=>r.id!==id);lsSave();render()}
+}
+
+function render(){
+  const tk=$('#q').value.toLowerCase().split(/\s+/).filter(Boolean);
+  const hay=r=>(r.nama+' '+r.jabatan+' '+veh(r).map(v=>v.nopol+' '+norm(v.nopol)+' '+v.jenis).join(' ')).toLowerCase();
+  const list=rows.filter(r=>{const h=hay(r);return tk.every(t=>h.includes(t))})
+    .sort((a,b)=>String(a.nama||'').localeCompare(String(b.nama||''),'id'));
+  $('#count').textContent=loaded?(tk.length?list.length+' dari '+rows.length+' orang':rows.length+' orang'):'Memuat…';
+  const dups=rows.length-new Set(rows.map(pkey)).size;
+  $('#merge').style.display=dups?'inline-block':'none';
+  $('#merge').textContent='Gabungkan duplikat ('+dups+')';
+  updateSel(list);
+  if(!list.length){
+    $('#list').innerHTML='<div class="empty">'+(rows.length?'Tidak ada yang cocok.':'Belum ada data. Tekan “Tambah data” untuk mulai.')+'</div>';
+    return;
+  }
+  $('#list').innerHTML=list.map(r=>
+    '<div class="card'+role(r)+(selMode&&sel.has(r.id)?' sel':'')+'"'+(selMode?' data-pick="'+esc(r.id)+'"':'')+'><div class="ch">'+(selMode?'<input type="checkbox" class="ck" data-pick="'+esc(r.id)+'"'+(sel.has(r.id)?' checked':'')+'>':'')+'<div class="cb"><div class="top"><div class="who"><div class="nama">'+esc(r.nama||'(tanpa nama)')+'</div>'+
+    (r.jabatan?'<div class="jab">'+esc(r.jabatan)+'</div>':'')+
+    '</div><div class="vs">'+veh(r).map(v=>'<div class="v"><span class="plate">'+esc(v.nopol)+'</span>'+(v.jenis?'<span class="jn">'+esc(v.jenis)+'</span>':'')+'</div>').join('')+'</div></div>'+
+    '<div class="act"><button data-a="edit" data-id="'+esc(r.id)+'">Ubah</button>'+
+    '<button class="del" data-a="del" data-id="'+esc(r.id)+'">'+(pendingDel===r.id?'Yakin hapus?':'Hapus')+'</button></div></div></div></div>'
+  ).join('');
+}
+
+function addVeh(v){
+  v=v||{};
+  const d=document.createElement('div');d.className='vr';
+  d.innerHTML='<input class="vn" placeholder="Nopol, mis. B 1234 XYZ" autocomplete="off" style="text-transform:uppercase" value="'+esc(v.nopol)+'"><input class="vj" list="jenis" placeholder="Jenis (Motor/Mobil)" autocomplete="off" value="'+esc(v.jenis)+'"><button class="x" type="button" data-x="1" aria-label="Hapus kendaraan">✕</button>';
+  $('#veh').appendChild(d);
+}
+const readVeh=()=>mergeV(Array.from(document.querySelectorAll('#veh .vr')).map(d=>({nopol:d.querySelector('.vn').value.trim(),jenis:d.querySelector('.vj').value.trim()})),[]);
+
+function openForm(r){
+  closeBulk();editing=r?r.id:null;
+  $('#nama').value=r?r.nama||'':'';
+  $('#jabatan').value=r?r.jabatan||'':'';
+  $('#veh').innerHTML='';
+  const vs=r?veh(r):[];(vs.length?vs:[{}]).forEach(addVeh);
+  $('#form').classList.add('open');
+  $('#nama').focus();
+}
+function closeForm(){editing=null;$('#form').classList.remove('open')}
+
+async function save(){
+  const d={nama:$('#nama').value.trim(),jabatan:$('#jabatan').value.trim(),kendaraan:readVeh()};
+  if(!d.nama&&!d.kendaraan.length){msg('Isi minimal nama atau nopol.');return}
+  try{
+    if(editing){await put(editing,d);msg('Tersimpan.')}
+    else{
+      const ex=rows.find(r=>pkey(r)===pkey(d));
+      if(ex){await put(ex.id,{nama:ex.nama,jabatan:ex.jabatan,kendaraan:mergeV(veh(ex),d.kendaraan)});msg('Digabung ke data '+ex.nama+' yang sudah ada.')}
+      else{await create(d);msg('Tersimpan.')}
+    }
+    closeForm();
+  }catch(e){msg('Gagal menyimpan: akun ini tidak punya izin menulis.')}
+}
+
+function parseBulk(t){
+  return t.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{
+    const sep=l.includes('\t')?'\t':l.includes('|')?'|':l.includes(';')?';':',';
+    const p=l.split(sep).map(x=>x.trim());
+    return {nama:p[0]||'',nopol:(p[1]||'').toUpperCase(),jabatan:p[2]||'',jenis:p[3]||''};
+  }).filter(d=>(d.nama||d.nopol)&&!(d.nama.toLowerCase()==='nama'&&d.nopol==='NOPOL'));
+}
+function openBulk(){closeForm();$('#bform').classList.add('open');$('#btext').focus()}
+function closeBulk(){$('#bform').classList.remove('open')}
+async function bulkSave(){
+  const items=parseBulk($('#btext').value);
+  if(!items.length){msg('Tidak ada baris yang bisa dibaca.');return}
+  const map=new Map();
+  rows.forEach(r=>map.set(pkey(r),{id:r.id,nama:r.nama,jabatan:r.jabatan,v:veh(r),isNew:false,touched:false}));
+  let dup=0;
+  items.forEach(it=>{
+    const k=pkey(it);let g=map.get(k);
+    if(!g){g={id:null,nama:it.nama,jabatan:it.jabatan,v:[],isNew:true,touched:false};map.set(k,g)}
+    const nv=mergeV(g.v,it.nopol?[{nopol:it.nopol,jenis:it.jenis}]:[]);
+    if(g.isNew&&!g.touched){g.v=nv;g.touched=true}
+    else if(nv.length>g.v.length){g.v=nv;g.touched=true}
+    else dup++;
+  });
+  const todo=Array.from(map.values()).filter(g=>g.touched);
+  let baru=0,upd=0;
+  $('#bsave').disabled=true;
+  try{
+    for(let i=0;i<todo.length;i+=20){
+      await Promise.all(todo.slice(i,i+20).map(g=>{
+        const d={nama:g.nama,jabatan:g.jabatan,kendaraan:g.v};
+        if(g.id){upd++;return put(g.id,d)}
+        baru++;return create(d);
+      }));
+    }
+    $('#btext').value='';$('#bprev').textContent='';closeBulk();
+    msg(baru+' orang baru, '+upd+' diperbarui (nopol ditambahkan)'+(dup?', '+dup+' baris duplikat dilewati':'')+'.');
+  }catch(e){msg('Gagal menambah: akun ini tidak punya izin menulis (sebagian mungkin sudah masuk).')}
+  $('#bsave').disabled=false;
+}
+
+async function mergeDups(){
+  const g=new Map();
+  rows.forEach(r=>{const k=pkey(r);if(!g.has(k))g.set(k,[]);g.get(k).push(r)});
+  let n=0;
+  try{
+    for(const a of g.values()){
+      if(a.length<2)continue;
+      let v=[];a.forEach(r=>{v=mergeV(v,veh(r))});
+      await put(a[0].id,{nama:a[0].nama,jabatan:a[0].jabatan,kendaraan:v});
+      for(const r of a.slice(1)){await drop(r.id);n++}
+    }
+    msg('Selesai: '+n+' data duplikat digabung, semua nopol tetap tersimpan.');
+  }catch(e){msg('Gagal menggabungkan: akun ini tidak punya izin menulis.')}
+}
+
+const TK='nopol-tema',modes=['auto','light','dark'],names={auto:'Otomatis',light:'Terang',dark:'Gelap'};
+let mode='auto';
+try{const s=localStorage.getItem(TK);if(modes.includes(s))mode=s}catch(e){}
+function applyTheme(){
+  if(mode==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',mode);
+  $('#theme').textContent=(mode==='light'?'☀️ ':mode==='dark'?'🌙 ':'🌓 ')+names[mode];
+}
+$('#theme').addEventListener('click',()=>{mode=modes[(modes.indexOf(mode)+1)%3];try{localStorage.setItem(TK,mode)}catch(e){}applyTheme()});
+applyTheme();
+
+function updateSel(list){
+  curList=list;
+  const ids=new Set(rows.map(r=>r.id));
+  sel.forEach(id=>{if(!ids.has(id))sel.delete(id)});
+  $('#selbar').classList.toggle('open',selMode);
+  $('#selmode').textContent=selMode?'Selesai pilih':'Pilih';
+  $('#list').className=selMode?'selmode':'';
+  const b=$('#seldel');b.disabled=!sel.size;
+  b.textContent=pendingBulkDel?'Yakin hapus '+sel.size+'?':'Hapus ('+sel.size+')';
+}
+function setSelMode(on){selMode=on;sel.clear();pendingBulkDel=false;pendingDel=null;if(on){closeForm();closeBulk()}render()}
+async function bulkDelete(){
+  const ids=Array.from(sel);
+  $('#seldel').disabled=true;
+  let ok=0;
+  try{
+    for(let i=0;i<ids.length;i+=20){
+      await Promise.all(ids.slice(i,i+20).map(id=>drop(id).then(()=>{ok++})));
+    }
+    msg(ok+' data dihapus.');
+  }catch(e){msg('Gagal menghapus sebagian: akun ini mungkin tidak punya izin menulis ('+ok+' terhapus).')}
+  sel.clear();pendingBulkDel=false;render();
+}
+$('#selmode').addEventListener('click',()=>setSelMode(!selMode));
+$('#selall').addEventListener('click',()=>{curList.forEach(r=>sel.add(r.id));pendingBulkDel=false;render()});
+$('#selnone').addEventListener('click',()=>{sel.clear();pendingBulkDel=false;render()});
+$('#seldel').addEventListener('click',()=>{
+  if(!sel.size)return;
+  if(pendingBulkDel){pendingBulkDel=false;bulkDelete()}
+  else{pendingBulkDel=true;render();setTimeout(()=>{if(pendingBulkDel){pendingBulkDel=false;render()}},4000)}
+});
+$('#q').addEventListener('input',render);
+$('#add').addEventListener('click',()=>openForm(null));
+$('#cancel').addEventListener('click',closeForm);
+$('#save').addEventListener('click',save);
+$('#addveh').addEventListener('click',()=>addVeh());
+$('#veh').addEventListener('click',e=>{
+  const b=e.target.closest('[data-x]');if(!b)return;
+  b.closest('.vr').remove();
+  if(!$('#veh').children.length)addVeh();
+});
+$('#bulk').addEventListener('click',openBulk);
+$('#bcancel').addEventListener('click',closeBulk);
+$('#bsave').addEventListener('click',bulkSave);
+$('#btext').addEventListener('input',()=>{const n=parseBulk($('#btext').value).length;$('#bprev').textContent=n?n+' baris terbaca':''});
+$('#merge').addEventListener('click',mergeDups);
+['nama','jabatan'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')save()}));
+$('#list').addEventListener('click',e=>{
+  if(selMode){
+    const c=e.target.closest('[data-pick]');if(!c)return;
+    const id=c.dataset.pick;
+    if(e.target.classList.contains('ck')){if(e.target.checked)sel.add(id);else sel.delete(id)}
+    else{if(sel.has(id))sel.delete(id);else sel.add(id)}
+    pendingBulkDel=false;render();return;
+  }
+  const b=e.target.closest('button');if(!b)return;
+  const id=b.dataset.id,r=rows.find(x=>x.id===id);
+  if(b.dataset.a==='edit'){pendingDel=null;openForm(r);window.scrollTo({top:0,behavior:'smooth'});render()}
+  else if(b.dataset.a==='del'){
+    if(pendingDel===id){pendingDel=null;drop(id).then(()=>msg('Data dihapus.')).catch(()=>msg('Gagal menghapus: akun ini tidak punya izin menulis.'))}
+    else{pendingDel=id;render();setTimeout(()=>{if(pendingDel===id){pendingDel=null;render()}},3000)}
+  }
+});
+
+(async()=>{
+  let db=null;
+  try{db=window.claude?await window.claude.use('db'):null}catch(e){db=null}
+  if(db){
+    api=db.collection('orang');
+    $('#foot').textContent='Data tersimpan di database halaman ini.';
+    const t=setTimeout(()=>{if(!loaded)$('#count').textContent='Data belum bisa dijangkau…'},10000);
+    api.onSnapshot(s=>{
+      clearTimeout(t);loaded=true;
+      rows=s.docs.map(d=>Object.assign({id:d.id},d.data()));
+      render();
+    },()=>{clearTimeout(t);loaded=true;$('#count').textContent='Gagal memuat data';render()});
+  }else{
+    rows=lsLoad();loaded=true;
+    $('#foot').textContent='Data tersimpan di browser ini saja.';
+    render();
+  }
+})();
+</script>
+</body>
+</html>
